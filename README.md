@@ -29,6 +29,15 @@ If you want to Utilize this Library. Please include the
 #include <SimpleVector.h> 
 ```
 
+# Arduino Library Manager:
+## Changelog: 
+### Version 1.0.0:
+* Initial Release; On pair with Platformio Version 1.0.5
+### Version 1.0.1: - BETA: [CURRENT-RELEASE]
+* Added Support for Range Based for Loops.
+* Fixed an issue with the Get Function.
+
+# PlatformIO Registry.
 ## ChangeLog
 ### Version 1.0.0:
 * Initial Release 
@@ -47,9 +56,18 @@ If you want to Utilize this Library. Please include the
 * Added a new function called setDebug() to set the debug value
 * Added a new function called getDebug() to get the debug value"
 ### Version 1.0.5:
-* Removed the Serial.print() Statements from the library to save memory. A version of this library that contains these debug statements will be available soon.
+* Removed the Serial.print() Statements from the library to save memory. A version of this library that contains these debug statements may be available at some point.
 * Added Function Comments
-
+### Version 1.0.6: 
+* Added Support for Range Based For loops
+* Added Support for Adding Elements during Construction.
+* Added BulkAdd Function() to add multiple elements at once.
+### Version 1.0.7:- ALPHA [KNOWN-ISSUE]
+* Added EmplaceBack Function so new libraries can depend on it correctly.
+* Added Compiler Directives to check if a certain board/Platform is being used. This is to ensure proper functionality with initializer lists.
+* Everything is handled Automatically, but if none of the preprocesor directives are met, then the Initializer_Lists will not be included which means you will not be able to bulk add directly into the constructor as that constructor will be removed by the compiler. However, if the compiler directives are met, then that constructor will remain and be available.
+### Version 1.0.7:-BETA [CURRENT-RELEASE]
+* Fixed an issue with the Get Function.
 
 
 
