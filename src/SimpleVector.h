@@ -32,14 +32,14 @@ private:
     /**
      * @brief Resize the array to the specified capacity
      * @param newCapacity The new capacity of the array
-     * 
+     *
      * @private This method is private because it is only used internally.
-     * 
+     *
      * @note This method will copy all elements from the old array to the new array.
     */
     void resize(unsigned int newCapacity) {
         T* newArray = new T[newCapacity];
-        
+
         for (unsigned int i = 0; i < count; i++) {
             newArray[i] = array[i];
         }
@@ -50,7 +50,7 @@ private:
 
     /**
      * @brief Ensure that the vector has enough capacity to add a new element
-     * 
+     *
      * @private This method is private because it is only used internally.
     */
     void ensureCapacity() {
@@ -89,7 +89,7 @@ public:
 
     /**
      * @brief Release the memory used by the vector
-     * 
+     *
      * @public This method is public because it is meant to be called by the user.
     */
     void releaseMemory() {
@@ -103,7 +103,7 @@ public:
      * @brief Shrink the capacity of the vector to match the count of elements
      * @param newCapacity The new capacity of the vector
      * @return True if the memory was successfully reserved, false otherwise
-     * 
+     *
      * @public This method is public because it is meant to be called by the user.
     */
     bool shrinkToFit() {
@@ -116,7 +116,7 @@ public:
 
     /**
     * @brief Clears the vector by setting all elements to their default value and resetting the count.
-    * 
+    *
     * @public This method is public because it is meant to be called by the user.
     */
     void clear() {
@@ -131,7 +131,7 @@ public:
     /**
      * @brief Add an element to the vector
      * @param item The item to be added to the vector
-     * 
+     *
     */
     void put(const T& item) {
         if (count == capacity) {
@@ -148,7 +148,7 @@ public:
         }
     }
 
-    void emplace_back() {  
+    void emplace_back() {
         ensureCapacity();
         // Default-construct in place
         new (elements + size()) T();
@@ -170,7 +170,7 @@ public:
     /**
      * @brief Add an element to the vector
      * @param item The item to be added to the vector
-     * 
+     *
      * @note This method is an alias for the put method.
     */
     void push_back(const T& item) {
@@ -181,7 +181,7 @@ public:
     /**
      * @brief Remove an element from the vector
      * @param item The item to be removed from the vector
-     * 
+     *
      * @note This method will shift all elements after the specified element to the left by one.
     */
     void remove(const T& item) {
@@ -198,16 +198,16 @@ public:
 
     /**
      * Overloads the subscript operator for the SimpleVector class.
-     * 
+     *
      * This function is used to access elements in the vector at a given index.
      * If the index is out of bounds (i.e., greater than or equal to the count of elements), it returns nullptr.
-     * 
+     *
      * @param index The index of the element to be accessed.
      * @return Reference to the element at the given index, or nullptr if the index is out of bounds.
      */
     T& operator[](unsigned int index) {
         static T dummy;
-        if (index >= count || index < 0) {
+        if (index >= count) {
             return dummy; // You can handle this error differently if needed
         }
         return array[index];
@@ -224,7 +224,7 @@ public:
     /**
      * @brief Get the size of the vector
      * @return The size of the vector
-     * 
+     *
      * @note This method returns the capacity of the vector, not the count of elements.
     */
     unsigned int size() const {
