@@ -64,11 +64,13 @@ If you want to Utilize this Library. Please include the
 * Added Support for Range Based For loops
 * Added Support for Adding Elements during Construction.
 * Added BulkAdd Function() to add multiple elements at once.
-### Version 1.0.7:- ALPHA 
+### Version 1.0.7:- Beta
 * Added EmplaceBack Function so new libraries can depend on it correctly.
 * Added Compiler Directives to check if a certain board/Platform is being used. This is to ensure proper functionality with initializer lists.
 * Everything is handled Automatically, but if none of the preprocesor directives are met, then the Initializer_Lists will not be included which means you will not be able to bulk add directly into the constructor as that constructor will be removed by the compiler. However, if the compiler directives are met, then that constructor will remain and be available.
-### Version 1.0.7:- BETA [CURRENT-RELEASE]
+### Version 1.0.7:
+* Fixed an issue with the compiler directives from the previous release. The directives control the initializer lists functionalities but the way they were set up forced you into using initializer list functions even if you never wanted to use them or the device you were using did not support them. This has been fixed. you will no longer be forced into utilizing the initializer lists and will be required to uncomment a #define compiler statement to use them.
+### Version 1.0.8: [CURRENT-RELEASE]
 * Removed Uneccessary negative number check in function operator[] since its not possible for unsigned int's to be negative.
 
 
