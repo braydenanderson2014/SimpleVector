@@ -81,7 +81,7 @@ jobs:
               `<!--\\s*${escapeRegex(MARKER_TARGET)}:\\s*([^/]+)\\/([^#]+)#(\\d+)(?:;type=([a-z_]+))?\\s*-->`,
               "i"
             );
-            const mirroredIssueUrlRegex = /https?:\/\/github\.com\/([^/\s]+)\/([^/\s]+)\/issues\/(\d+)/i;
+            const mirroredIssueOrPullUrlRegex = /https?:\/\/github\.com\/([^/\s]+)\/([^/\s]+)\/(issues|pull)\/(\d+)/i;
 
             const parseMarker = (body, regex) => {
               if (!body) return null;
@@ -101,7 +101,7 @@ jobs:
                 return marker;
               }
 
-              const urlMatch = (body || "").match(mirroredIssueUrlRegex);
+              const urlMatch = (body || "").match(mirroredIssueOrPullUrlRegex);
               if (!urlMatch) {
                 return null;
               }
@@ -109,8 +109,8 @@ jobs:
               return {
                 owner: urlMatch[1],
                 repo: urlMatch[2],
-                number: Number.parseInt(urlMatch[3], 10),
-                sourceType: "issue"
+                sourceType: urlMatch[3] === "pull" ? "pull_request" : "issue",
+                number: Number.parseInt(urlMatch[4], 10)
               };
             };
 
@@ -131,7 +131,7 @@ jobs:
             };
 
             const listTargetIssuesSince = async (sinceIso) => {
-              const all = await github.paginate(github.rest.issues.listForRepo, {
+              return github.paginate(github.rest.issues.listForRepo, {
                 owner: TARGET_OWNER,
                 repo: TARGET_REPO,
                 state: "all",
@@ -140,8 +140,6 @@ jobs:
                 since: sinceIso,
                 per_page: 100
               });
-
-              return all.filter((issue) => !issue.pull_request);
             };
 
             const listSourceIssuesSince = async (sinceIso) => {
@@ -198,7 +196,7 @@ jobs:
               const allPullRequests = await github.paginate(github.rest.pulls.list, {
                 owner: SOURCE_OWNER,
                 repo: SOURCE_REPO,
-                state: "open",
+                state: "all",
                 sort: "updated",
                 direction: "desc",
                 per_page: 100
