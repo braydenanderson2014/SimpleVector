@@ -187,12 +187,6 @@ jobs:
             const listSourceIssuesForDiscovery = async (sinceIso) => {
               const recent = await listSourceIssuesSince(sinceIso);
 
-              // Canonical runs need broader discovery so previously closed source PRs/issues
-              // that only contain mirror links in older comments are still discovered.
-              if (!IS_CANONICAL_REPO) {
-                return recent;
-              }
-
               const maxItems = Number.isFinite(syncConfig.discoveryScanMaxItems)
                 ? Math.max(100, syncConfig.discoveryScanMaxItems)
                 : 400;
@@ -221,6 +215,42 @@ jobs:
                 }
               }
 
+              // Fallback path: if issue listing unexpectedly returns nothing,
+              // still discover mirrored links from open/closed PR numbers.
+              if (expanded.length === 0 && recent.length === 0) {
+                for (let page = 1; page <= maxPages; page += 1) {
+                  const response = await github.rest.pulls.list({
+                    owner: SOURCE_OWNER,
+                    repo: SOURCE_REPO,
+                    state: "all",
+                    sort: "updated",
+                    direction: "desc",
+                    per_page: 100,
+                    page
+                  });
+
+                  const pageItems = Array.isArray(response.data) ? response.data : [];
+                  if (pageItems.length === 0) {
+                    break;
+                  }
+
+                  expanded.push(
+                    ...pageItems.map((pullRequest) => ({
+                      number: pullRequest.number,
+                      updated_at: pullRequest.updated_at,
+                      state: pullRequest.state,
+                      pull_request: {
+                        url: pullRequest.url
+                      }
+                    }))
+                  );
+
+                  if (pageItems.length < 100) {
+                    break;
+                  }
+                }
+              }
+
               const uniqueByNumber = new Map();
               for (const item of expanded) {
                 uniqueByNumber.set(item.number, item);
@@ -228,6 +258,10 @@ jobs:
               for (const item of recent) {
                 uniqueByNumber.set(item.number, item);
               }
+
+              core.info(
+                `Source discovery candidates: recent=${recent.length}, expanded=${expanded.length}, unique=${uniqueByNumber.size}, maxItems=${maxItems}`
+              );
 
               return Array.from(uniqueByNumber.values());
             };
