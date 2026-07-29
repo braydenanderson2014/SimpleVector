@@ -136,7 +136,7 @@ public:
             if (capacity != MIN_CAPACITY || array == nullptr) {
                 resize(MIN_CAPACITY);
                 count = 0;
-                return true;
+                return array != nullptr && capacity == MIN_CAPACITY;
             }
             return false;
         }
